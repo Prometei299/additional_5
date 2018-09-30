@@ -1,28 +1,36 @@
 module.exports = function check(str, bracketsConfig) {
-  let result = false, counter = 0, arr = str.split('');
+  if (str.length % 2 !== 0) {
+    return false;
+  }
+ 
+  arr = str.split("");
+  let bracketsDictionary = {};
+  for (let i = 0; i < bracketsConfig.length; i++){
+    const key = bracketsConfig[i][0];
+    const value = bracketsConfig[i][1];
+    bracketsDictionary[key] = value;
+  }
 
-  for (let i = 0; i < bracketsConfig.length; ++i) {
-    let CheckOpenBackets = arr.indexOf(bracketsConfig[i][0]);
-    let CheckCloseBackets = arr.indexOf(bracketsConfig[i][1]);
-
-    if (CheckCloseBackets < CheckOpenBackets) {
-      result = false;
-      break;
-    }
-    for (let j = CheckOpenBackets; j < arr.length; ++j) {
-      if (arr[j] === bracketsConfig[i][0]) {
-        counter++;
+  let stack = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (Object.keys(bracketsDictionary).find(key => key === arr[i])) {
+      stack.push(arr[i]);
+      if(arr[i] == '8'){
+        stack.pop();
       }
-      if (arr[j] === bracketsConfig[i][1]) {
-        counter--;
+      if (arr[i] == '7'){
+        stack.pop();
       }
-    }
-    if (!counter) {
-      result = true;
+      if (arr[i] == '|'){
+        stack.pop();
+      }
     } else {
-      result = false;
+      const bracket = stack.pop();
+      if (bracketsDictionary[bracket] !== arr[i]) {
+        return false;
+      }
     }
   }
 
-  return result;
+  return true;
 }
